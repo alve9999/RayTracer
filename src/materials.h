@@ -2,15 +2,7 @@
 #include "Ray.h"
 #include <glm/glm.hpp>
 
-glm::vec3 random_sphere_point() {
-    vec3 random_point;
-    while (1) {
-        random_point = glm::vec3(rand * 2.0f - 1.0f, rand * 2.0f - 1.0f, rand * 2.0f - 1.0f);
-        if (glm::lenght(random_point) < 1) {
-            return random_point;
-        }
-    }
-}
+glm::vec3 random_sphere_point();
 
 class materials {
 public:

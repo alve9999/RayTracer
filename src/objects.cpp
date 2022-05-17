@@ -9,9 +9,9 @@ sphere::sphere(glm::vec3 aCenter, float aRadius,materials& aMaterial) {
 
 bool sphere::check_hit(ray& ray,  float tmin, float tmax){
     glm::vec3 k = ray.origin + center;
-    float a = dot(ray.direction, ray.direction);
-    float h = dot(k, ray.direction);
-    float c = dot(k, k) - radius * radius;
+    float a =glm::dot(ray.direction, ray.direction);
+    float h = glm::dot(k, ray.direction);
+    float c = glm::dot(k, k) - radius * radius;
     if (((h * h) - (a * c)) < 0) {
         return false;
     }
@@ -24,7 +24,7 @@ bool sphere::check_hit(ray& ray,  float tmin, float tmax){
     }
     ray.reg_hit.normal = glm::normalize(ray.at(ans) + center);
     ray.reg_hit.t = ans;
-    if (dot(ray.reg_hit.normal, glm::normalize(ray.direction)) < 0) {
+    if (glm::dot(ray.reg_hit.normal, glm::normalize(ray.direction)) < 0) {
         ray.reg_hit.outside = false;
     }
     else {
