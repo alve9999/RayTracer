@@ -90,8 +90,6 @@ void render_image(int y1,int y2,int image_width, int pixel_sample_size, int imag
                 glm::vec3 colour = scene_hit(ray, objects, 50);
                 pixel_colour += colour;
             }
-            glColor3f(pixel_colour.x/255,pixel_colour.y/255,pixel_colour.z/255);
-            glVertex2i(i,j);
         }
         std::lock_guard<std::mutex> guard(mute_count);
         count++;
@@ -122,7 +120,7 @@ void shader(){
     glm::vec3 view_width = u*viewport_width;
     int pixel_sample_size = 500;
     int max_depth = 50;
-    glm::vec3 bottom_left = pov - (view_width / 2) - (view_height / 2) - w;
+    glm::vec3 bottom_left = pov - (view_width *0.5f) - (view_height * 0.5f) - w;
 
     //multithreading
     int thread_count = 8;
@@ -139,12 +137,10 @@ void shader(){
             if (count>=(image_height)) {
                 break;
             }
-            std::cerr << percent * 100 << "%" << std::endl;
         }
         thread_pool[i].join();
     }
     std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<float> time_span = std::chrono::duration_cast<std::chrono::duration<float>>(t2 - t1);
-    std::cerr << time_span.count();
 }
