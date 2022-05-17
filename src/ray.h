@@ -1,5 +1,4 @@
 #pragma once
-#include "glm/fwd.hpp"
 #include <glm/glm.hpp>
 
 class hit {
@@ -19,6 +18,5 @@ public:
 
     ray(glm::vec3 adirection, glm::vec3 aorigin);
 
-    bool intersects_triangle(glm::vec3 a, glm::vec3 b, glm::vec3 c);
     glm::vec3 at(const float t);
 };
