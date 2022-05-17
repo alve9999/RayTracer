@@ -1,10 +1,7 @@
 #include "init_graphics.h"
+#include "GLFW/glfw3.h"
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    glViewport(0, 0, width, height);
-}  
-GLFWwindow* init_graphics(int width, int height){
+GLFWwindow* init_graphics(int width, int height) {
 
     GLFWwindow* window;
 
@@ -33,6 +30,5 @@ GLFWwindow* init_graphics(int width, int height){
     //set viewport
     glViewport(0, 0, width, height);
 
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     return window;
 }
