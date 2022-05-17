@@ -55,6 +55,17 @@ int main(void)
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
+<<<<<<< HEAD
+    SDL_RenderPresent(renderer);
+
+    SDL_Delay(5000);
+
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    SDL_Quit();
+
+=======
     glfwTerminate();
+>>>>>>> 0c47e10479d2add6c46b98d11909772d6879d673
     return 0;
 }
