@@ -6,7 +6,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include "init_graphics.h"
-
+#include "shader.h"
 
 void process_input(GLFWwindow *window)
 {
@@ -16,7 +16,7 @@ void process_input(GLFWwindow *window)
 
 int main(void)
 {
-    GLFWwindow* window = init_graphics(800, 600);
+    GLFWwindow* window = init_graphics(1080, 1920);
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
