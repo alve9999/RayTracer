@@ -1,60 +1,35 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <iostream>
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include "init_graphics.h"
-#include "shader.h"
+#include <SDL2/SDL.h>
 
-void process_input(GLFWwindow *window)
+SDL_Window* window = nullptr;
+SDL_Renderer* renderer = nullptr;
+bool is_running = false;
+
+int main(int argc, char* argv[])
 {
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
-
-int main(void)
-{
-    GLFWwindow* window = init_graphics(1080, 1920);
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
-    /* Loop until the user closes the window */
-    while(!glfwWindowShouldClose(window))
+    window = SDL_CreateWindow("RayTracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, 0);
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    is_running = true;
+    
+    SDL_PumpEvents();
+    SDL_Event event;
+    SDL_PollEvent(&event);
+    switch (event.type)
     {
-        //process the inputs
-        process_input(window);
-
-        //render next fram
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("My name is window, ImGUI window");
-        ImGui::ShowDemoWindow();
-        ImGui::End();
-        
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        //Poll events and swap buffer
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        case SDL_QUIT:
+            is_running = false;
+            break;
+        default:
+            break;
     }
 
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderClear(renderer);
 
-    glfwTerminate();
-    return 0;
+    SDL_RenderPresent(renderer);
+
+    SDL_Delay(5000);
+
+    SDL_DestroyWindow(window);
+    SDL_DestroyRenderer(renderer);
+    SDL_Quit();
 }

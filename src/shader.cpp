@@ -1,24 +1,23 @@
 #include "shader.h"
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
-#include <algorithm>
 #include "objects.h"
 #include "ray.h"
 #include "materials.h"
+#include <glm/glm.hpp>
+#include <algorithm>
 #include <vector>
 #include <memory>
 #include <cmath>
 #include <ctime>
 #include <thread>
 #include <mutex>
-# define PI 3.14159265358979323846
+#define PI 3.14159265358979323846
 #define rand ((float)rand() / RAND_MAX)
 std::mutex mute_count;
 int count=0;
 inline ray get_ray(float width, float height,glm::vec3& pov,glm::vec3& bottom_left,glm::vec3& view_height,glm::vec3& view_width) {
     return(ray(bottom_left +view_width*width +view_height*height-pov, pov));
 }
+
 glm::vec3 scene_hit(ray& ray, std::vector<std::shared_ptr<object>>& objects, int max_depth) {
     max_depth--;
     std::vector<float> souloutions;
@@ -45,6 +44,7 @@ glm::vec3 scene_hit(ray& ray, std::vector<std::shared_ptr<object>>& objects, int
     float t = 0.5 * (glm::normalize(ray.direction).y + 1.0);
     return glm::vec3(255.0f, 255.0f, 255.0f) * (1.0f - t) + glm::vec3(128.0f, 200.0f, 255.0f) * t;
 }
+
 void random_scene(std::vector<std::shared_ptr<object>>& objects) {
     glm::vec3 center(0, -1000, 0);
     diffuse diffuse1(glm::vec3(0.5, 0.5, 0.5));
@@ -78,6 +78,7 @@ void random_scene(std::vector<std::shared_ptr<object>>& objects) {
         }
     }
 }
+
 void render_image(int y1,int y2,int image_width, int pixel_sample_size, int image_height, glm::vec3 pov,glm::vec3 bottom_left, std::vector<std::shared_ptr<object>>& objects,glm::vec3 view_height,glm::vec3 view_width) {
     for (int j = y2 - 1; j >= y1; --j) {
         for (int i = 0; i < image_width; ++i) {

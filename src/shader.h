@@ -1,10 +1,10 @@
 #pragma once
-#include <glm/glm.hpp>
-#include <vector>
-#include <memory>
 #include "ray.h"
 #include "materials.h"
 #include "objects.h"
+#include <glm/glm.hpp>
+#include <vector>
+#include <memory>
 glm::vec3 scene_hit(ray& ray, std::vector<std::shared_ptr<object>>& objects, int max_depth);
 void shader();
 void random_scene(std::vector<std::shared_ptr<object>>& objects);
