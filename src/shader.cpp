@@ -10,10 +10,16 @@
 #include <ctime>
 #include <thread>
 #include <mutex>
+#include <SDL2/SDL.h>
+#include <array>
+#include <iostream>
+
 #define PI 3.14159265358979323846
 #define rand ((float)rand() / RAND_MAX)
+
 std::mutex mute_count;
 int count=0;
+
 inline ray get_ray(float width, float height,glm::vec3& pov,glm::vec3& bottom_left,glm::vec3& view_height,glm::vec3& view_width) {
     return(ray(bottom_left +view_width*width +view_height*height-pov, pov));
 }
@@ -79,30 +85,30 @@ void random_scene(std::vector<std::shared_ptr<object>>& objects) {
     }
 }
 
-void render_image(int y1,int y2,int image_width, int pixel_sample_size, int image_height, glm::vec3 pov,glm::vec3 bottom_left, std::vector<std::shared_ptr<object>>& objects,glm::vec3 view_height,glm::vec3 view_width) {
+void render_image(int y1,int y2,int image_width, int pixel_sample_size, int image_height, glm::vec3 pov,glm::vec3 bottom_left, std::vector<std::shared_ptr<object>>& objects,glm::vec3 view_height,glm::vec3 view_width,std::array<std::array<glm::vec3,1080>,1920>& image) {
     for (int j = y2 - 1; j >= y1; --j) {
         for (int i = 0; i < image_width; ++i) {
-
             glm::vec3 pixel_colour(0, 0, 0);
             for (int k = 0; k < pixel_sample_size; k++) {
                 float u = (float(i) + rand) / float(image_width - 1);
                 float v = (float(j) + rand) / float(image_height - 1);
                 ray ray = get_ray(u, v, pov, bottom_left, view_height, view_width);
                 glm::vec3 colour = scene_hit(ray, objects, 50);
-                pixel_colour += colour;
+                pixel_colour += colour*(1.0f / float(pixel_sample_size));
             }
+            image[i][j] = pixel_colour;
         }
         std::lock_guard<std::mutex> guard(mute_count);
         count++;
     }
 }
 
-void shader(){
+void shader(std::array<std::array<glm::vec3,1080>,1920>& image){
     std::vector<std::shared_ptr<object>> objects;
     random_scene(objects);
-    float image_height = 1080;
-    float ratio = (16.0f / 9.0f);
-    int image_width = static_cast<int>(image_height*ratio);
+    const int image_height = 1080;
+    const float ratio = (16.0f / 9.0f);
+    const int image_width = 1920;
 
     // camera
     glm::vec3 pov = glm::vec3(-13, -2, -5);
@@ -119,29 +125,32 @@ void shader(){
 
     glm::vec3 view_height = v*viewport_height;
     glm::vec3 view_width = u*viewport_width;
-    int pixel_sample_size = 500;
-    int max_depth = 50;
+    int pixel_sample_size = 1;
+    int max_depth = 1;
     glm::vec3 bottom_left = pov - (view_width *0.5f) - (view_height * 0.5f) - w;
 
     //multithreading
-    int thread_count = 8;
-    std::vector<std::thread> thread_pool;
-    
-    // Render
-    std::chrono::high_resolution_clock::time_point t1 = std::chrono::high_resolution_clock::now();
-    for (int i = 0; i < thread_count; i++) {
-        thread_pool.push_back(std::thread(render_image, (image_height / 8) * i, (image_height / 8) * (i + 1), image_width, pixel_sample_size, image_height, pov, bottom_left, std::ref(objects), view_height, view_width));
-    }
-    for (int i = 0; i < thread_count; i++) {
-        while (std::thread::id() == std::thread().get_id()) {
-            auto percent = float(count) / float(image_height);
-            if (count>=(image_height)) {
-                break;
-            }
-        }
-        thread_pool[i].join();
-    }
-    std::chrono::high_resolution_clock::time_point t2 = std::chrono::high_resolution_clock::now();
+    //int thread_count = 8;
+    //std::vector<std::thread> thread_pool;
 
-    std::chrono::duration<float> time_span = std::chrono::duration_cast<std::chrono::duration<float>>(t2 - t1);
+    render_image(0, image_height, image_width, pixel_sample_size, image_height, pov, bottom_left, objects, view_height, view_width, image);
+
+    // Render
+    //for (int i = 0; i < thread_count; i++) {
+    //    thread_pool.push_back(std::thread(render_image, (image_height / 8) * i, (image_height / 8) * (i + 1), image_width, pixel_sample_size, image_height, pov, bottom_left, std::ref(objects), view_height, view_width,std::ref(image)));
+    //    std::cout<<"Thread "<<i<<" started"<<std::endl;
+    //}
+
+    //for (int i = 0; i < thread_count; i++) {
+    //    std::cout<<"Thread "<<i<<" joining"<<std::endl;
+    //    while (std::thread::id() == std::thread().get_id()) {
+    //        auto percent = float(count) / float(image_height);
+    //        if (count>=(image_height)) {
+    //            break;
+    //
+    //        }
+    //        std::cout << percent * 100 << "%" << std::endl;
+    //    }
+    //    thread_pool[i].join();
+    //}
 }

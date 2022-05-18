@@ -1,71 +1,40 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+#include <SDL2/SDL.h>
 #include <iostream>
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-#include "init_graphics.h"
+#include <glm/glm.hpp>
+#include <array>
 #include "shader.h"
 
-void process_input(GLFWwindow *window)
-{
-    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
-}
+SDL_Window* window;
+SDL_Renderer* renderer;
+bool is_running;
+std::array<std::array<glm::vec3,1080>,1920> image;
 
-int main(void)
-{
-    GLFWwindow* window = init_graphics(1080, 1920);
 
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    ImGui::StyleColorsDark();
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 330");
-
-    /* Loop until the user closes the window */
-    while(!glfwWindowShouldClose(window))
-    {
-        //process the inputs
-        process_input(window);
-
-        //render next fram
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        ImGui::Begin("My name is window, ImGUI window");
-        ImGui::ShowDemoWindow();
-        ImGui::End();
-        
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        //Poll events and swap buffer
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+int main(int argc, char* argv[]){
+    window = SDL_CreateWindow("RayTracer", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1920, 1080, 0);
+    renderer = SDL_CreateRenderer(window, -1, 0);
+    is_running = true;
+    while(is_running){
+        //SDL_PumpEvents();
+        //SDL_Event event;
+        //
+        //SDL_PollEvent(&event);
+        //switch (event.type){
+        //    case SDL_QUIT:
+        //        is_running = false;
+        //    default:
+        //        ;
+        //}
+        //SDL_RenderClear(renderer);
+        shader(image);
+        //for(int i = 0; i < image.size(); i++){
+        //    for(int j = 0; j < image[i].size(); j++){
+        //        SDL_SetRenderDrawColor(renderer, image[i][j].x, image[i][j].y, image[i][j].z, 255);
+        //        SDL_RenderDrawPoint(renderer, i, j);
+        //    }
+        //}
+        //SDL_RenderPresent(renderer);
+        //SDL_Delay(10000);
     }
-
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-<<<<<<< HEAD
-    SDL_RenderPresent(renderer);
-
-    SDL_Delay(5000);
-
-    SDL_DestroyWindow(window);
-    SDL_DestroyRenderer(renderer);
-    SDL_Quit();
-
-=======
-    glfwTerminate();
->>>>>>> 0c47e10479d2add6c46b98d11909772d6879d673
     return 0;
 }

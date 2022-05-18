@@ -1,6 +1,7 @@
 #include "materials.h"
 #include <glm/glm.hpp>
 #define rand ((float)rand() / RAND_MAX)
+
 glm::vec3 random_sphere_point() {
     glm::vec3 random_point;
     while (1) {

@@ -1,6 +1,6 @@
 INCLUDES=-I../include
 LINKLIBS=-L../libs/SDL2 -lmingw32 -lSDL2main -lSDL2 -lSDL2_image
-CPPFLAGS=$(INCLUDES)
+CPPFLAGS=$(INCLUDES) -o2
 
 SRC_DIR := ../src
 SRC_DIR_LIBS := ../libs
@@ -21,4 +21,4 @@ $(OBJ_DIR)/%.o: $(SRC_DIR_LIBS)/%.cpp $(OBJ_DIR)
 	g++ $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 a.exe: $(SRC_FILES) $(SRC_FILES_LIBS) $(OBJ_FILES)
-	g++ $(INCLUDES) $(OBJ_FILES) -o main.exe $(LINKLIBS)
+	g++ $(INCLUDES) $(OBJ_FILES) -o main.exe $(LINKLIBS) -o2
